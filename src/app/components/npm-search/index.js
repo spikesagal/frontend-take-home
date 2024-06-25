@@ -36,6 +36,7 @@ export default function NpmSearchComponent() {
   return (
     <div className={styles.NpmSearch}>
       <input
+        data-testid="search"
         type="text"
         value={queryText}
         placeholder="Search npm modules..."
@@ -43,24 +44,33 @@ export default function NpmSearchComponent() {
       />
       <ul className={styles.Results}>
         {error && (
-          <li key="error" className={styles.Error}>{error}</li>
+          <li
+            data-testid="error"
+            key="error"
+            className={styles.Error}
+          >
+            {error}
+          </li>
         )}
         {results.map(result => {
           // Assuming name is always present and unique, can be used as key
           // Description and links are optional
           const {name, description = '', version, links: {npm = ''} = {npm: ''}} = result.package;
           return (
-            <li key={name}>
+            <li
+              data-testid="result"
+              key={name}
+            >
               <a href={npm}>
                 <div>
-                  <span>
+                  <span data-testid="package">
                     {name}
                   </span>
-                  <span>
+                  <span data-testid="version">
                     {version}
                   </span>
                 </div>
-                <div>
+                <div data-testid="description">
                   {description}
                 </div>
               </a>
