@@ -52,8 +52,6 @@ export default function NpmSearchComponent() {
           )
         })}
       </ul>
-
-      <button type="submit">Search</button>
     </div>
   );
 }
