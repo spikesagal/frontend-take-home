@@ -14,7 +14,6 @@ export default function NpmSearchComponent() {
 
   useEffect(() => {
     const fetchModules = async () => {
-      console.log(debouncedQueryText);
       try {
         const resp = await fetch(`https://api.npms.io/v2/search/suggestions?q=${debouncedQueryText}`);
         if (resp.status === 200) {
@@ -44,12 +43,14 @@ export default function NpmSearchComponent() {
       />
       <ul className={styles.Results}>
         {error && (
-          <li className={styles.Error}>{error}</li>
+          <li key="error" className={styles.Error}>{error}</li>
         )}
         {results.map(result => {
-          const {name = '', description = '', version = '', links: {npm = ''} = {npm: ''}} = result.package;
+          // Assuming name is always present and unique, can be used as key
+          // Description and links are optional
+          const {name, description = '', version, links: {npm = ''} = {npm: ''}} = result.package;
           return (
-            <li>
+            <li key={name}>
               <a href={npm}>
                 <div>
                   <span>
