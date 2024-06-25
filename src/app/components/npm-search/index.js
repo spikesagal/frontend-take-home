@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
-import styles from './styles.module.css'; //styles for component won't updated until main style updates
+import styles from './styles.module.css';
 
 export default function NpmSearchComponent() {
   const [queryText, setQueryText] = useState('');
-  const [debouncedQueryText] = useDebounce(queryText, 1000);
+  const [debouncedQueryText] = useDebounce(queryText, .5 * 1000);
   const [results, setResults] = useState([]);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function NpmSearchComponent() {
         placeholder="Search npm modules..."
         onChange={(evt) => setQueryText(evt.target.value)}
       />
-      <ul>
+      <ul className={styles.Results}>
         {results.map(result => {
           const {name, description, version, links: {npm}} = result.package;
           return (
