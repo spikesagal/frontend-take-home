@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useDebounce } from 'use-debounce';
-import styles from './styles.module.css';
+import { useState, useEffect } from "react";
+import { useDebounce } from "use-debounce";
+import styles from "./styles.module.css";
 
-const ERROR_MESSAGE = 'We\'re having trouble connecting to npm.';
+const ERROR_MESSAGE = "We're having trouble connecting to npm.";
 
 export default function NpmSearchComponent() {
-  const [queryText, setQueryText] = useState('');
-  const [debouncedQueryText] = useDebounce(queryText, .5 * 1000); // Wait half a second before triggering search
+  const [queryText, setQueryText] = useState("");
+  const [debouncedQueryText] = useDebounce(queryText, 0.5 * 1000); // Wait half a second before triggering search
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
   const [simulateBadResponse, setSimulateBadResponse] = useState(false);
@@ -18,7 +18,9 @@ export default function NpmSearchComponent() {
       try {
         // if "Simulate bad response" is checked, send request to malformed URL
         // set error if request throws or returns anything but HTTP 200, otherwise return result
-        const url = simulateBadResponse ? 'https://api.npms.io/v2/oops' : `https://api.npms.io/v2/search/suggestions?q=${debouncedQueryText}`;
+        const url = simulateBadResponse
+          ? "https://api.npms.io/v2/oops"
+          : `https://api.npms.io/v2/search/suggestions?q=${debouncedQueryText}`;
         const resp = await fetch(url);
         if (resp.status === 200) {
           setError(null);
@@ -29,13 +31,12 @@ export default function NpmSearchComponent() {
       } catch (e) {
         setError(ERROR_MESSAGE);
       }
-    }
+    };
 
     // trigger search on delay
     if (debouncedQueryText) {
       fetchModules();
     }
-
   }, [debouncedQueryText]);
 
   return (
@@ -46,7 +47,7 @@ export default function NpmSearchComponent() {
         checked={simulateBadResponse}
         onChange={() => setSimulateBadResponse(!simulateBadResponse)}
       />
-      <br/>
+      <br />
 
       <input
         data-testid="search"
@@ -57,38 +58,30 @@ export default function NpmSearchComponent() {
       />
       <ul className={styles.Results}>
         {error && (
-          <li
-            data-testid="error"
-            key="error"
-            className={styles.Error}
-          >
+          <li data-testid="error" key="error" className={styles.Error}>
             {error}
           </li>
         )}
-        {results.map(result => {
+        {results.map((result) => {
           // Assuming name is always present and unique, can be used as key
           // Description and links are optional
-          const {name, description = '', version, links: {npm = ''} = {npm: ''}} = result.package;
+          const {
+            name,
+            description = "",
+            version,
+            links: { npm = "" } = { npm: "" },
+          } = result.package;
           return (
-            <li
-              data-testid="result"
-              key={name}
-            >
+            <li data-testid="result" key={name}>
               <a href={npm}>
                 <div>
-                  <span data-testid="package">
-                    {name}
-                  </span>
-                  <span data-testid="version">
-                    {version}
-                  </span>
+                  <span data-testid="package">{name}</span>
+                  <span data-testid="version">{version}</span>
                 </div>
-                <div data-testid="description">
-                  {description}
-                </div>
+                <div data-testid="description">{description}</div>
               </a>
             </li>
-          )
+          );
         })}
       </ul>
     </div>
