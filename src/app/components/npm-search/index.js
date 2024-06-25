@@ -11,11 +11,13 @@ export default function NpmSearchComponent() {
   const [debouncedQueryText] = useDebounce(queryText, .5 * 1000);
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
+  const [simulateBadResponse, setSimulateBadResponse] = useState(false);
 
   useEffect(() => {
     const fetchModules = async () => {
       try {
-        const resp = await fetch(`https://api.npms.io/v2/search/suggestions?q=${debouncedQueryText}`);
+        const url = simulateBadResponse ? 'https://api.npms.io/v2/oops' : `https://api.npms.io/v2/search/suggestions?q=${debouncedQueryText}`;
+        const resp = await fetch(url);
         if (resp.status === 200) {
           setError(null);
           setResults(await resp.json());
@@ -35,6 +37,14 @@ export default function NpmSearchComponent() {
 
   return (
     <div className={styles.NpmSearch}>
+      <label>Simulate bad response</label>
+      <input
+        type="checkbox"
+        checked={simulateBadResponse}
+        onChange={() => setSimulateBadResponse(!simulateBadResponse)}
+      />
+      <br/>
+
       <input
         data-testid="search"
         type="text"
