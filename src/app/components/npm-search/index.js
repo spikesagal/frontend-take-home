@@ -8,7 +8,7 @@ const ERROR_MESSAGE = 'We\'re having trouble connecting to npm.';
 
 export default function NpmSearchComponent() {
   const [queryText, setQueryText] = useState('');
-  const [debouncedQueryText] = useDebounce(queryText, .5 * 1000);
+  const [debouncedQueryText] = useDebounce(queryText, .5 * 1000); // Wait half a second before triggering search
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
   const [simulateBadResponse, setSimulateBadResponse] = useState(false);
@@ -16,6 +16,8 @@ export default function NpmSearchComponent() {
   useEffect(() => {
     const fetchModules = async () => {
       try {
+        // if "Simulate bad response" is checked, send request to malformed URL
+        // set error if request throws or returns anything but HTTP 200, otherwise return result
         const url = simulateBadResponse ? 'https://api.npms.io/v2/oops' : `https://api.npms.io/v2/search/suggestions?q=${debouncedQueryText}`;
         const resp = await fetch(url);
         if (resp.status === 200) {
@@ -29,6 +31,7 @@ export default function NpmSearchComponent() {
       }
     }
 
+    // trigger search on delay
     if (debouncedQueryText) {
       fetchModules();
     }
